@@ -1,4 +1,3 @@
-
 var map = new ol.Map({
     target: 'map',
     renderer: 'canvas',
@@ -474,7 +473,7 @@ var Title = new ol.control.Control({
     element: (() => {
         var titleElement = document.createElement('div');
         titleElement.className = 'top-left-title ol-control';
-        titleElement.innerHTML = '<h2 class="project-title">Pemetaan Jangkauan Pelayanan SPPG di Kabupaten Kulon Progo</h2>';
+        titleElement.innerHTML = '<h2 class="project-title">Pemetaan Jaringan Distribusi Makan Bergizi Gratis (MBG) Kabupaten Kulon Progo</h2>';
         return titleElement;
     })(),
     target: 'top-left-container'
@@ -505,13 +504,13 @@ var Abstract = new ol.control.Control({
             window.showAbstract = function () {
                 linkElement.classList.remove("project-abstract");
                 linkElement.classList.add("project-abstract-uncollapsed");
-                linkElement.innerHTML = 'Tanggal Pengambilan Data: 2 Mei 2026<br />Sumber Data                    : Disdikpora Kulon Progo';
+                linkElement.innerHTML = 'Tanggal Perolehan Data: 2 Mei 2026<br />Sumber Data                    : Disdikpora Kulon Progo';
             }
 
             hideAbstract();
         } else {
             linkElement.classList.add("project-abstract-uncollapsed");
-            linkElement.innerHTML = 'Tanggal Pengambilan Data: 2 Mei 2026<br />Sumber Data                    : Disdikpora Kulon Progo';
+            linkElement.innerHTML = 'Tanggal Perolehan Data: 2 Mei 2026<br />Sumber Data                    : Disdikpora Kulon Progo';
         }
 
         titleElement.appendChild(linkElement);
@@ -557,14 +556,37 @@ document.getElementsByClassName('search-layer-input-search')[0].placeholder = 'C
 
 var layerSwitcher = new ol.control.LayerSwitcher({
     tipLabel: "Layers",
-    target: 'top-right-container'
+    target: 'top-right-container',
+    activationMode: 'click',
+    startActive: false
 });
 map.addControl(layerSwitcher);
 
+function toggleCustomLayers(status) {
+    map.getLayers().forEach(function (layer) {
+        let title = layer.get('title');
 
+        // ESRI & Batas Kapanewon tetap aktif
+        if (title !== 'ESRI World Topo' &&
+            title !== '<img src="styles/legend/BatasKapanewon_1.png" /> Batas Kapanewon') {
+            layer.setVisible(status);
+        }
+    });
+}
 
+setTimeout(function () {
+    const switcher = document.querySelector('.layer-switcher');
 
-
+    if (switcher && !document.getElementById('custom-layer-buttons')) {
+        const div = document.createElement('div');
+        div.id = 'custom-layer-buttons';
+        div.innerHTML = `
+            <button onclick="toggleCustomLayers(true)">ON</button>
+            <button onclick="toggleCustomLayers(false)">OFF</button>
+        `;
+        switcher.appendChild(div);
+    }
+}, 1000);
 
 //attribution
 var bottomAttribution = new ol.control.Attribution({
